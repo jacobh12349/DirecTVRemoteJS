@@ -4,6 +4,22 @@
  * session persistence, api calls, and more.
  * */
 const Alexa = require('ask-sdk-core');
+import fetch from 'node-fetch'
+
+const DirecTVPauseIntentHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'PauseDirecTVIntent';
+    },
+    handle(handlerInput) {
+        fetch("http://192.168.0.34:8080/remote/processKey?key=pause", {method: 'POST'});
+
+        return handlerInput.responseBuilder
+            .speak("Ok")
+            //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+            .getResponse();
+    }
+};
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
@@ -143,6 +159,7 @@ const ErrorHandler = {
  * */
 exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
+        DirecTVPauseIntentHandler,
         LaunchRequestHandler,
         HelloWorldIntentHandler,
         HelpIntentHandler,
